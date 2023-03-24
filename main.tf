@@ -3,13 +3,13 @@ resource "docker_image" "centos_image" {
   name = "centos:latest"
 }
 
-#
+# Create an ECS cluster named cluster
 resource "aws_ecs_cluster" "cluster" {
   name = "cluster"
 }
 
 
-#
+#Add capacity provider
 resource "aws_ecs_cluster_capacity_providers" "cluster" {
   cluster_name       = aws_ecs_cluster.cluster.name
   capacity_providers = ["FARGATE"]
@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "cluster_task" {
   requires_compatibilities = ["FARGATE", "EC2"]
   cpu                      = 256
   memory                   = 512
-  container_definitions    = DEFINITION
+  container_definitions    = <<DEFINITION
   [
     {
       "name"                : "cluster_task",
@@ -54,7 +54,7 @@ resource "aws_ecs_task_definition" "cluster_task" {
       "essential"           : true,
       "portMappings"  : [
         {
-          "containerPort"   : 80
+          "containerPort"   : 80,
           "hostPort"        : 80
         }
       ]
